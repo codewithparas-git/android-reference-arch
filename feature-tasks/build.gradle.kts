@@ -50,4 +50,6 @@ dependencies {
 
     // Import design system for theme
     implementation(project(":core-designsystem"))
+    implementation(project(":data-db"))
+
 }

@@ -1,32 +1,77 @@
-package com.codewithparas.feature.tasks.ui
-
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import com.codewithparas.feature.tasks.ui.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(
+    viewModel: TaskViewModel,
+    snackbarHostState: SnackbarHostState,
+    backStackEntry: NavBackStackEntry,
     onAddTask: () -> Unit,
-    onTaskClick: (String) -> Unit
+    onTaskClick: (Int) -> Unit
 ) {
+    val state by viewModel.uiState.collectAsState()
+
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Tasks") }) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddTask) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
             }
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("My Tasks", style = MaterialTheme.typography.headlineMedium)
+                },
+            )
         }
     ) { padding ->
-        Column(modifier = Modifier
-            .padding(padding)
-            .fillMaxSize()) {
-            Text("Task 1", modifier = Modifier.padding(8.dp))
-            Text("Task 2", modifier = Modifier.padding(8.dp))
+        Column {
+            LazyColumn(contentPadding = padding) {
+                items(state.tasks) { task ->
+                    Text(
+                        text = task.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onTaskClick(task.id) }
+                            .padding(16.dp)
+                    )
+                }
+            }
+
+            // ✅ Snackbar observer
+            ShowSnackbarOnMessage(backStackEntry, snackbarHostState)
+//            // Current task (if any)
+//            state.currentTask?.let { task ->
+//                Text("Selected: ${task.title}", style = MaterialTheme.typography.bodyLarge)
+//            }
         }
     }
 }
