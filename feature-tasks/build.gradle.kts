@@ -46,10 +46,13 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     // Navigation (needed if you want to directly use nav args in feature)
-    implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation(libs.androidx.navigation.compose)
 
     // Import design system for theme
     implementation(project(":core-designsystem"))
     implementation(project(":data-db"))
+    implementation(project(":data-network"))
+    implementation(project(":core-common"))
+    implementation(libs.androidx.work.manager)
 
 }

@@ -15,13 +15,15 @@ import com.codewithparas.app.di.AppModule
 import com.codewithparas.core.designsystem.theme.AppTheme
 import com.codewithparas.feature.tasks.ui.TaskNavGraph
 import com.codewithparas.feature.tasks.ui.TaskViewModel
+import com.codewithparas.feature.tasks.worker.SyncDependencies
+import com.codewithparas.feature.tasks.worker.scheduleTaskSync
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val repo = AppModule.provideRepository(applicationContext)
         enableEdgeToEdge()
         setContent {
-            val repo = AppModule.provideRepository(applicationContext)
             val factory = TaskViewModelFactory(repo)
             val viewModel: TaskViewModel = viewModel(factory = factory)
 
@@ -29,6 +31,9 @@ class MainActivity : ComponentActivity() {
                 TaskNavGraph(navController = rememberNavController(), viewModel = viewModel)
             }
         }
+        SyncDependencies.repository = repo
+
+        scheduleTaskSync(applicationContext)
     }
 }
 

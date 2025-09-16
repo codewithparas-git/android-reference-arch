@@ -1,6 +1,6 @@
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.codewithparas.feature.tasks.TaskRepository
+import com.codewithparas.feature.tasks.repo.TaskRepository
 import com.codewithparas.feature.tasks.ui.TaskViewModel
 
 class TaskViewModelFactory(

@@ -1,4 +1,4 @@
-package com.codewithparas.feature.tasks.model
+package com.codewithparas.core.common.model
 
 
 data class Task(

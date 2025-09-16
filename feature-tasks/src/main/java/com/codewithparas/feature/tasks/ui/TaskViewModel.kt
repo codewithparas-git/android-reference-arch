@@ -3,8 +3,8 @@ package com.codewithparas.feature.tasks.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codewithparas.data.db.TaskEntity
-import com.codewithparas.feature.tasks.TaskRepository
-import com.codewithparas.feature.tasks.model.Task
+import com.codewithparas.feature.tasks.repo.TaskRepository
+import com.codewithparas.core.common.model.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ class TaskViewModel(private val repo: TaskRepository) : ViewModel() {
             }
         }
     }
-    fun getTask(taskId: Int): StateFlow<Task?> =
+    fun getTask(taskId: Int): StateFlow<com.codewithparas.core.common.model.Task?> =
         repo.getTaskById(taskId).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     fun setCurrentTask(taskId: Int?) {

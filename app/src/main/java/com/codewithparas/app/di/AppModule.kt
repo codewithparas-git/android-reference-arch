@@ -3,7 +3,7 @@ package com.codewithparas.app.di
 import android.content.Context
 import androidx.room.Room
 import com.codewithparas.data.db.TaskDatabase
-import com.codewithparas.feature.tasks.TaskRepository
+import com.codewithparas.feature.tasks.repo.TaskRepository
 
 object AppModule {
     @Volatile private var db: TaskDatabase? = null
