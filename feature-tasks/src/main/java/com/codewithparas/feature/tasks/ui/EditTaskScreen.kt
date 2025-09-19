@@ -20,49 +20,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.codewithparas.data.db.toEntity
-import com.codewithparas.feature.tasks.ui.TaskViewModel
-
-
+import com.codewithparas.core.designsystem.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTaskScreen(
-    viewModel: TaskViewModel,
-    taskId: Int?,
+    uiState: EditTaskUiState,
+    onTitleChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onDelete: () -> Unit,
     onNavigateBack: () -> Unit,
     onShowMessage: (String) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
 
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-
-    // If editing, load currentTask
-    LaunchedEffect(taskId) {
-        if (taskId != null) viewModel.setCurrentTask(taskId)
-    }
-
-    val task = uiState.currentTask
-    var title by rememberSaveable { mutableStateOf("") }
-
-    // Whenever task changes (e.g., after DB loads), update the text field
-    LaunchedEffect(task) {
-        if (taskId == null) {
-            // New task → always clear
-            title = ""
-        } else if (task != null) {
-            // Editing existing task → set from DB
-            title = task.title
-        }
-    }
+    val taskId = uiState.taskId
 
     Scaffold(
         topBar = {
@@ -84,8 +63,8 @@ fun EditTaskScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
+                value = uiState.title,
+                onValueChange = { onTitleChange(it) },
                 label = { Text("Task Title") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -94,16 +73,16 @@ fun EditTaskScreen(
             Button(
                 onClick = {
                     if (taskId == null) {
-                        viewModel.addTask(title) // Add new
+                        onSave() // Add new
                         onShowMessage("Task added")
                     } else {
-                        viewModel.updateTask(task?.toEntity()!!.copy(title = title)) // Update existing
+                        onSave() // Update existing
                         onShowMessage("Task updated")
 
                     }
                     onNavigateBack()
                 },
-                enabled = title.isNotBlank(),
+                enabled = uiState.isValid && (taskId == null || uiState.isModified),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (taskId == null) {
@@ -149,8 +128,8 @@ fun EditTaskScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
-                    task?.let {
-                        viewModel.deleteTask(it.toEntity())
+                    uiState.taskId?.let {
+                        onDelete()
                         onShowMessage("Task deleted")
                         onNavigateBack()
                     }
@@ -167,4 +146,23 @@ fun EditTaskScreen(
     }
 
 
+}
+
+@Preview
+@Composable
+fun EditTaskScreenPreview() {
+    AppTheme {
+        EditTaskScreen(
+            uiState = EditTaskUiState(
+                taskId = 1,
+                title = "Task 1",
+                isValid = true
+            ),
+            onSave = {},
+            onDelete = {},
+            onTitleChange = {},
+            onNavigateBack = {},
+            onShowMessage = {}
+        )
+    }
 }

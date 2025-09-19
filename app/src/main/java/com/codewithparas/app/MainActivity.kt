@@ -1,6 +1,5 @@
 package com.codewithparas.app
 
-import TaskViewModelFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.codewithparas.app.di.AppModule
 import com.codewithparas.core.designsystem.theme.AppTheme
 import com.codewithparas.feature.tasks.ui.TaskNavGraph
-import com.codewithparas.feature.tasks.ui.TaskViewModel
 import com.codewithparas.feature.tasks.worker.SyncDependencies
 import com.codewithparas.feature.tasks.worker.scheduleTaskSync
 
@@ -24,11 +22,8 @@ class MainActivity : ComponentActivity() {
         val repo = AppModule.provideRepository(applicationContext)
         enableEdgeToEdge()
         setContent {
-            val factory = TaskViewModelFactory(repo)
-            val viewModel: TaskViewModel = viewModel(factory = factory)
-
             AppTheme {
-                TaskNavGraph(navController = rememberNavController(), viewModel = viewModel)
+                TaskNavGraph(navController = rememberNavController(), repository = repo)
             }
         }
         SyncDependencies.repository = repo
