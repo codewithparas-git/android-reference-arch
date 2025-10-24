@@ -2,12 +2,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codewithparas.core.common.model.Task
 import com.codewithparas.data.db.toEntity
-import com.codewithparas.feature.tasks.repo.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class EditTaskViewModel(private val repo: TaskRepository) : ViewModel() {
+class EditTaskViewModel(private val repo: ITaskRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(EditTaskUiState())
     val uiState: StateFlow<EditTaskUiState> = _uiState
 
